@@ -1,5 +1,6 @@
 package com.example.exception.accounts;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,6 +28,21 @@ class AccountControllerTest {
     }
 
     @Test
+    public void createAccount() throws Exception {
+        Account account = new Account();
+        account.setUserId("12345");
+        account.setPassword("123");
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        ResultActions result = mockMvc.perform(post("/accounts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content (objectMapper.writeValueAsString(account))
+        );
+
+        result.andDo(print());
+    }
+
+    @Test
     public void createAccountBadRequest() throws Exception {
         ResultActions result = mockMvc.perform(get("/accountsException")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -33,4 +50,6 @@ class AccountControllerTest {
 
         result.andDo(print());
     }
+
+
 }
